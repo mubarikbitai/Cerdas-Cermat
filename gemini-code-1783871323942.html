@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Cerdas Cermat SD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div id="root" class="w-full max-w-xl"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const quizData = {
+            "Kelas 1": {
+                "Bahasa Inggris": [
+                    { q: "Apa bahasa Inggris dari 'Apel'?", a: ["Apple", "Banana", "Orange", "Grape"], c: 0, h: "Buah ini biasanya berwarna merah." },
+                    { q: "How many is 'Five'?", a: ["3", "4", "5", "6"], c: 2, h: "Jumlah jari pada satu tangan biasa." },
+                    { q: "Warna 'Blue' adalah...", a: ["Merah", "Kuning", "Biru", "Hijau"], c: 2, h: "Warna langit saat cerah." },
+                    { q: "Bahasa Inggris dari 'Kucing' adalah...", a: ["Dog", "Cat", "Bird", "Fish"], c: 1, h: "Suaranya 'meow'." },
+                    { q: "'Good Morning' artinya...", a: ["Selamat Siang", "Selamat Malam", "Selamat Pagi", "Selamat Sore"], c: 2, h: "Diucapkan saat matahari terbit." },
+                    { q: "Angka 'Ten' adalah...", a: ["1", "10", "100", "0"], c: 1, h: "Satu digabung dengan nol." },
+                    { q: "Bahasa Inggris 'Buku' adalah...", a: ["Pencil", "Eraser", "Book", "Bag"], c: 2, h: "Benda untuk membaca materi pelajaran." },
+                    { q: "'Father' dalam bahasa Indonesia adalah...", a: ["Ibu", "Kakak", "Ayah", "Adik"], c: 2, h: "Kepala keluarga laki-laki." },
+                    { q: "Apa arti 'Sit down'?", a: ["Berdiri", "Duduk", "Lari", "Jalan"], c: 1, h: "Kebalikan dari Stand up." },
+                    { q: "Hewan 'Elephant' berukuran...", a: ["Small", "Tiny", "Big", "Thin"], c: 2, h: "Gajah adalah hewan yang sangat besar." }
+                ]
+            },
+            "Kelas 2": {
+                "Agama Islam": [
+                    { q: "Rukun Islam yang pertama adalah...", a: ["Sholat", "Zakat", "Syahadat", "Puasa"], c: 2, h: "Pengakuan tiada Tuhan selain Allah." },
+                    { q: "Surah Al-Fatihah terdiri dari ... ayat.", a: ["5", "6", "7", "8"], c: 2, h: "Surah pembuka wajib dalam sholat." },
+                    { q: "Nabi terakhir umat Islam adalah...", a: ["Nabi Isa AS", "Nabi Musa AS", "Nabi Muhammad SAW", "Nabi Ibrahim AS"], c: 2, h: "Penutup para nabi (Khatamul Anbiya)." },
+                    { q: "Sholat Subuh dilakukan sebanyak ... rakaat.", a: ["2", "3", "4", "1"], c: 0, h: "Jumlah rakaat paling sedikit di sholat fardhu." },
+                    { q: "Kitab suci umat Islam adalah...", a: ["Injil", "Taurat", "Al-Qur'an", "Zabur"], c: 2, h: "Wahyu Allah yang diturunkan kepada Nabi Muhammad SAW." },
+                    { q: "Malaikat penyampai wahyu adalah...", a: ["Mikail", "Israil", "Jibril", "Ridwan"], c: 2, h: "Namanya diawali dengan huruf J." },
+                    { q: "Tempat ibadah umat Islam dinamakan...", a: ["Gereja", "Pura", "Masjid", "Vihara"], c: 2, h: "Tempat melakukan sholat berjamaah." },
+                    { q: "Sebelum sholat kita wajib bersuci dengan cara...", a: ["Makan", "Mandi", "Wudhu", "Tidur"], c: 2, h: "Menggunakan air bersih untuk membasuh wajah, tangan, dll." },
+                    { q: "Nama ayah Nabi Muhammad SAW adalah...", a: ["Abu Thalib", "Abdullah", "Abdul Muthalib", "Hamzah"], c: 1, h: "Memiliki arti nama 'Hamba Allah'." },
+                    { q: "Agama Islam mengajarkan kita untuk ... orang tua.", a: ["Melawan", "Menjauhi", "Menghormati", "Membenci"], c: 2, h: "Perilaku terpuji yang mendatangkan ridha Allah." }
+                ]
+            },
+            "Kelas 3": {
+                "Bahasa Indonesia": [
+                    { q: "Lawan kata dari kata 'Besar' adalah...", a: ["Tinggi", "Lebar", "Kecil", "Panjang"], c: 2, h: "Ukuran tubuh semut jika dibanding gajah." },
+                    { q: "Tanda baca untuk mengakhiri kalimat berita atau pernyataan adalah...", a: ["Koma", "Tanya", "Titik", "Seru"], c: 2, h: "Simbol berbentuk titik bulat kecil di akhir." },
+                    { q: "Kata tanya yang digunakan untuk menanyakan lokasi atau tempat adalah...", a: ["Kapan", "Siapa", "Di mana", "Mengapa"], c: 2, h: "Fokus pada posisi atau daerah lokasi kejadian." },
+                    { q: "Persamaan kata (sinonim) dari 'Giat' adalah...", a: ["Malas", "Rajin", "Santai", "Lambat"], c: 1, h: "Suka bekerja keras dan bersemangat." },
+                    { q: "Ibu memasak di dapur. Subjek dari kalimat tersebut adalah...", a: ["Memasak", "Di dapur", "Ibu", "Dapur"], c: 2, h: "Orang atau pelaku yang melakukan kegiatan." },
+                    { q: "Hewan yang hanya memakan tumbuh-tumbuhan disebut...", a: ["Karnivora", "Omnivora", "Herbivora", "Insektivora"], c: 2, h: "Contohnya adalah sapi, kambing, dan kelinci." },
+                    { q: "Cerita khayalan atau dongeng tentang kehidupan hewan disebut...", a: ["Mite", "Legenda", "Fabel", "Sage"], c: 2, h: "Cerita Kancil dan Buaya adalah salah satu contohnya." },
+                    { q: "Penulisan huruf kapital yang benar untuk nama orang berikut adalah...", a: ["budi", "Budi", "bUdi", "budI"], c: 1, h: "Huruf pertama nama orang wajib menggunakan huruf besar." },
+                    { q: "Indra tubuh manusia yang berfungsi untuk mendengarkan suara adalah...", a: ["Mata", "Hidung", "Telinga", "Lidah"], c: 2, h: "Terletak di bagian kanan dan kiri kepala." },
+                    { q: "Semboyan persatuan bangsa Indonesia adalah...", a: ["Tut Wuri Handayani", "Bhinneka Tunggal Ika", "Ing Ngarsa Sung Tuladha", "Merdeka atau Mati"], c: 1, h: "Artinya berbeda-beda tetapi tetap satu jua." }
+                ]
+            },
+            "Kelas 4": {
+                "IPA": [
+                    { q: "Proses pembuatan makanan pada tumbuhan hijau dengan bantuan cahaya disebut...", a: ["Respirasi", "Oksidasi", "Fotosintesis", "Adaptasi"], c: 2, h: "Memerlukan klorofil, air, dan sinar matahari." },
+                    { q: "Benda yang memiliki kemampuan menarik benda-benda dari besi disebut...", a: ["Listrik", "Magnet", "Gaya", "Energi"], c: 1, h: "Memiliki dua kutub, yaitu utara dan selatan." },
+                    { q: "Perubahan wujud benda dari zat cair menjadi gas dinamakan...", a: ["Membeku", "Mencair", "Menguap", "Menyublim"], c: 2, h: "Terjadi pada air yang direbus secara terus-menerus." },
+                    { q: "Hewan berikut yang mengalami metamorfosis sempurna dalam hidupnya adalah...", a: ["Kupu-kupu", "Belalang", "Kecoa", "Jangkrik"], c: 0, h: "Hewan ini mengalami fase kepompong (pupa)." },
+                    { q: "Bagian telinga yang bertugas menangkap vibrasi atau getaran suara adalah...", a: ["Saraf telinga", "Gendang telinga", "Daun telinga", "Saluran eustachius"], c: 1, h: "Berupa selaput tipis yang sensitif terhadap getaran." },
+                    { q: "Energi panas matahari dimanfaatkan manusia di bumi untuk...", a: ["Menghaluskan pakaian", "Mengeringkan pakaian", "Mendinginkan ruangan", "Menyirami bunga"], c: 1, h: "Panasnya membantu menguapkan air pada kain basah." },
+                    { q: "Tumbuhan yang memiliki karakteristik batang berongga untuk mengapung adalah...", a: ["Mawar", "Mangga", "Teratai", "Cemara"], c: 2, h: "Tumbuhan ini hidup di permukaan air." },
+                    { q: "Kemampuan bunglon mengubah warna kulit sesuai lingkungannya disebut...", a: ["Ekolokasi", "Mimikri", "Autotomi", "Hibernasi"], c: 1, h: "Istilah penyamaran warna agar terhindar dari musuh." },
+                    { q: "Planet dalam tata surya kita yang dijuluki sebagai Planet Merah adalah...", a: ["Venus", "Mars", "Jupiter", "Saturnus"], c: 1, h: "Letaknya berada di urutan keempat dari Matahari." },
+                    { q: "Alat pernapasan utama pada hewan ikan adalah...", a: ["Paru-paru", "Trakea", "Insang", "Kulit"], c: 2, h: "Menyaring oksigen di dalam air, terletak di samping kepala." }
+                ]
+            },
+            "Kelas 5": {
+                "IPS": [
+                    { q: "Tokoh bangsa yang membacakan teks Proklamasi Kemerdekaan RI adalah...", a: ["Moh. Hatta", "Ir. Soekarno", "Ahmad Subardjo", "Sayuti Melik"], c: 1, h: "Beliau merupakan Presiden pertama Republik Indonesia." },
+                    { q: "Kerajaan bercorak Islam pertama yang berdiri di wilayah Indonesia adalah...", a: ["Majapahit", "Sriwijaya", "Samudera Pasai", "Demak"], c: 2, h: "Terletak di ujung utara pulau Sumatera (Aceh)." },
+                    { q: "Satu-satunya negara di Asia Tenggara (ASEAN) yang tidak pernah dijajah barat adalah...", a: ["Vietnam", "Thailand", "Malaysia", "Filipina"], c: 1, h: "Dikenal dengan julukan Negara Gajah Putih." },
+                    { q: "Mata uang resmi yang digunakan di negara Kesatuan Republik Indonesia adalah...", a: ["Ringgit", "Dollar", "Rupiah", "Peso"], c: 2, h: "Dilambangkan dengan simbol Rp." },
+                    { q: "Ibu kota dari negara tetangga Filipina adalah...", a: ["Bangkok", "Hanoi", "Manila", "Jakarta"], c: 2, h: "Kota pelabuhan besar yang berawalan huruf M." },
+                    { q: "Daerah penghasil aspal alam terbesar di Indonesia berada di Pulau...", a: ["Jawa", "Sumatera", "Buton", "Bangka"], c: 2, h: "Sebuah pulau di wilayah Sulawesi Tenggara." },
+                    { q: "Organisasi kawasan Asia Tenggara (ASEAN) resmi didirikan pada...", a: ["8 Agustus 1967", "17 Agustus 1945", "10 November 1945", "1 Juni 1945"], c: 0, h: "Dideklarasikan di Bangkok melalui Deklarasi Bangkok." },
+                    { q: "Gunung berapi tertinggi yang berada di Pulau Jawa adalah...", a: ["Gunung Merapi", "Gunung Semeru", "Gunung Slamet", "Gunung Lawu"], c: 1, h: "Puncak terkenalnya dinamakan Mahameru." },
+                    { q: "Prasasti Ciaruteun yang ditemukan di Bogor merupakan peninggalan kerajaan...", a: ["Kutai", "Tarumanegara", "Pajajaran", "Singasari"], c: 1, h: "Identik dengan cetakan telapak kaki Raja Purnawarman." },
+                    { q: "Pahlawan nasional yang mendapat julukan Ayam Jantan dari Timur adalah...", a: ["Pangeran Diponegoro", "Sultan Hasanuddin", "Kapitan Pattimura", "Tuanku Imam Bonjol"], c: 1, h: "Beliau merupakan Raja dari Kerajaan Gowa di Makassar." }
+                ]
+            },
+            "Kelas 6": {
+                "Matematika": [
+                    { q: "Berapakah hasil perhitungan dari (-12) + 15?", a: ["-27", "3", "-3", "27"], c: 1, h: "Ibarat memiliki hutang 12, lalu dibayar sebesar 15." },
+                    { q: "Berapa luas lingkaran yang memiliki jari-jari sepanjang 7 cm? (gunakan nilai π = 22/7)", a: ["44 cm²", "154 cm²", "616 cm²", "49 cm²"], c: 1, h: "Gunakan rumus matematika: Luas = π × r × r." },
+                    { q: "Sebuah kubus memiliki panjang rusuk 5 cm. Berapakah volume kubus tersebut?", a: ["25 cm³", "75 cm³", "125 cm³", "150 cm³"], c: 2, h: "Rumus volume kubus adalah Sisi dikalikan Sisi dikalikan Sisi." },
+                    { q: "Berapakah Faktor Persekutuan Terbesar (FPB) dari bilangan 12 dan 18?", a: ["2", "3", "6", "36"], c: 2, h: "Angka paling besar yang bisa membagi habis bilangan 12 dan 18." },
+                    { q: "Tentukan nilai median (nilai tengah) dari urutan data acak berikut: 2, 4, 3, 6, 5", a: ["3", "4", "5", "4.5"], c: 1, h: "Urutkan angka dari yang terkecil dahulu, lalu cari posisi tengahnya." },
+                    { q: "Ubah bentuk pecahan biasa 4/5 menjadi bentuk persen!", a: ["40%", "50%", "80%", "90%"], c: 2, h: "Kalikan pecahan tersebut dengan nilai 100%." },
+                    { q: "Berapakah hasil akhir dari operasi bilangan pangkat 3³ + 4²?", a: ["25", "35", "43", "45"], c: 2, h: "Hitung (3 × 3 × 3) kemudian ditambahkan dengan hasil dari (4 × 4)." },
+                    { q: "Berapakah nilai rata-rata (mean) dari data nilai: 7, 8, dan 9?", a: ["7", "8", "9", "24"], c: 1, h: "Jumlahkan ketiga nilai tersebut lalu bagi dengan total banyak data (3)." },
+                    { q: "Sebuah segitiga mempunyai alas 10 cm dan tinggi 8 cm. Luas segitiga tersebut adalah...", a: ["80 cm²", "40 cm²", "18 cm²", "20 cm²"], c: 1, h: "Gunakan rumus baku: Luas = 1/2 × alas × tinggi." },
+                    { q: "Berapakah hasil hasil perkalian desimal dari 2.5 × 4?", a: ["8", "9", "10", "11"], c: 2, h: "Dua setengah dijumlahkan sebanyak empat kali." }
+                ]
+            }
+        };
+
+        const classes = Object.keys(quizData);
+
+        function App() {
+            const [step, setStep] = useState('config'); // config, quiz, result
+            const [selectedClass, setSelectedClass] = useState('');
+            const [selectedSubject, setSelectedSubject] = useState('');
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [score, setScore] = useState(0);
+            const [showHint, setShowHint] = useState(false);
+            const [questions, setQuestions] = useState([]);
+            const [userAnswers, setUserAnswers] = useState([]); // Menyimpan histori jawaban siswa
+
+            // Mengambil daftar mapel yang tersedia dinamis berdasarkan kelas pilihan
+            const availableSubjects = selectedClass ? Object.keys(quizData[selectedClass]) : [];
+
+            const startQuiz = () => {
+                if (!selectedClass || !selectedSubject) {
+                    alert("Silakan pilih Tingkat Kelas dan Mata Pelajaran terlebih dahulu!");
+                    return;
+                }
+                const data = quizData[selectedClass]?.[selectedSubject];
+                if (data) {
+                    setQuestions(data);
+                    setStep('quiz');
+                    setCurrentQuestion(0);
+                    setScore(0);
+                    setShowHint(false);
+                    setUserAnswers([]);
+                }
+            };
+
+            const handleAnswer = (index) => {
+                const isCorrect = index === questions[currentQuestion].c;
+                if (isCorrect) {
+                    setScore(score + 1);
+                }
+                
+                // Catat jawaban user
+                setUserAnswers([...userAnswers, {
+                    question: questions[currentQuestion].q,
+                    options: questions[currentQuestion].a,
+                    correctIndex: questions[currentQuestion].c,
+                    selectedIndex: index,
+                    isCorrect: isCorrect
+                }]);
+                
+                const next = currentQuestion + 1;
+                if (next < questions.length) {
+                    setCurrentQuestion(next);
+                    setShowHint(false);
+                } else {
+                    setStep('result');
+                }
+            };
+
+            return (
+                <div className="glass rounded-3xl shadow-2xl p-6 md:p-8 border border-white my-4">
+                    {step === 'config' && (
+                        <div className="text-center">
+                            <i className="fas fa-graduation-cap text-6xl text-blue-600 mb-4"></i>
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Cerdas Cermat Digital</h1>
+                            <p className="text-gray-600 mb-6 text-sm md:text-base">Asah kemampuanmu dengan memilih tingkat kelas dan mata pelajaran!</p>
+                            
+                            <div className="space-y-4 text-left">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1">Pilih Tingkat Kelas</label>
+                                    <select 
+                                        className="w-full p-3 rounded-xl border-2 border-blue-100 focus:border-blue-500 outline-none bg-white transition"
+                                        value={selectedClass}
+                                        onChange={(e) => {
+                                            setSelectedClass(e.target.value);
+                                            setSelectedSubject(''); // Reset mapel jika kelas berganti
+                                        }}
+                                    >
+                                        <option value="">-- Pilih Kelas --</option>
+                                        {classes.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1">Pilih Mata Pelajaran</label>
+                                    <select 
+                                        className="w-full p-3 rounded-xl border-2 border-blue-100 focus:border-blue-500 outline-none bg-white transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        value={selectedSubject}
+                                        onChange={(e) => setSelectedSubject(e.target.value)}
+                                        disabled={!selectedClass}
+                                    >
+                                        <option value="">{selectedClass ? "-- Pilih Mapel --" : "-- Pilih Kelas Dahulu --"}</option>
+                                        {availableSubjects.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                </div>
+
+                                <button 
+                                    onClick={startQuiz}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg transform hover:-translate-y-0.5 transition mt-6"
+                                >
+                                    Mulai Kuis <i className="fas fa-play ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {step === 'quiz' && (
+                        <div>
+                            <div className="flex justify-between items-center mb-6 border-b pb-4 border-gray-100">
+                                <span className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-xs md:text-sm font-bold">
+                                    Soal {currentQuestion + 1} dari {questions.length}
+                                </span>
+                                <span className="text-gray-500 text-xs md:text-sm font-medium bg-gray-100 px-3 py-1 rounded-full">
+                                    {selectedClass} - {selectedSubject}
+                                </span>
+                            </div>
+
+                            <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-6 leading-relaxed">
+                                {questions[currentQuestion].q}
+                            </h2>
+
+                            <div className="grid gap-3 mb-6">
+                                {questions[currentQuestion].a.map((opt, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleAnswer(idx)}
+                                        className="text-left p-4 rounded-xl border-2 border-gray-100 hover:border-blue-400 hover:bg-blue-50/50 transition font-medium text-gray-700 flex items-center w-full"
+                                    >
+                                        <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 font-bold shrink-0">
+                                            {String.fromCharCode(65 + idx)}
+                                        </span>
+                                        <span className="text-sm md:text-base">{opt}</span>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="mt-4">
+                                {!showHint ? (
+                                    <button 
+                                        onClick={() => setShowHint(true)}
+                                        className="text-blue-500 text-xs md:text-sm font-semibold inline-flex items-center hover:underline"
+                                    >
+                                        <i className="fas fa-lightbulb mr-2 text-yellow-500"></i> Butuh bantuan? Tampilkan Petunjuk (Hint)
+                                    </button>
+                                ) : (
+                                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-xl transition">
+                                        <p className="text-yellow-800 text-xs md:text-sm">
+                                            <strong>Petunjuk:</strong> {questions[currentQuestion].h}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {step === 'result' && (
+                        <div className="text-center">
+                            <i className="fas fa-trophy text-7xl text-yellow-400 mb-4 animate-bounce"></i>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-2">Selesai!</h2>
+                            <p className="text-gray-600 mb-6 text-sm">Kamu telah menyelesaikan semua tantangan soal.</p>
+                            
+                            <div className="bg-gradient-to-br from-blue-50 to-sky-100 rounded-3xl p-6 mb-6">
+                                <div className="text-xs text-blue-600 font-bold uppercase tracking-widest mb-1">Skor Akhir</div>
+                                <div className="text-5xl md:text-6xl font-black text-blue-700">
+                                    {Math.round((score / questions.length) * 100)}
+                                </div>
+                                <div className="text-gray-600 text-xs md:text-sm mt-2 font-medium">
+                                    Berhasil menjawab benar <span className="text-green-600 font-bold">{score}</span> dari {questions.length} soal.
+                                </div>
+                            </div>
+
+                            {/* Komponen Review Pembahasan Jawaban */}
+                            <div className="text-left mb-6 max-h-60 overflow-y-auto border border-gray-200 rounded-2xl p-4 bg-gray-50/50 space-y-4">
+                                <h3 className="font-bold text-gray-700 text-sm mb-2 border-b pb-1"><i className="fas fa-list-check mr-2 text-blue-500"></i>Ulasan Jawaban:</h3>
+                                {userAnswers.map((ans, idx) => (
+                                    <div key={idx} className="text-xs border-b pb-2 last:border-0 last:pb-0">
+                                        <p className="font-semibold text-gray-800">{idx + 1}. {ans.question}</p>
+                                        <p className={`${ans.isCorrect ? 'text-green-600' : 'text-red-600'} font-medium mt-0.5`}>
+                                            Jawaban Kamu: {String.fromCharCode(65 + ans.selectedIndex)}. {ans.options[ans.selectedIndex]} 
+                                            {ans.isCorrect ? ' (Benar)' : ` (Salah)`}
+                                        </p>
+                                        {!ans.isCorrect && (
+                                            <p className="text-gray-600 italic">
+                                                Kunci Jawaban: {String.fromCharCode(65 + ans.correctIndex)}. {ans.options[ans.correctIndex]}
+                                            </p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button 
+                                onClick={() => setStep('config')}
+                                className="w-full bg-gray-800 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-lg transition text-sm md:text-base"
+                            >
+                                <i className="fas fa-redo mr-2"></i> Coba Level atau Mapel Lain
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
